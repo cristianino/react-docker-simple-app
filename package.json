@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npx jest --watchAll=false --coverage --env=jsdom"
   },
   "dependencies": {
     "react": "^19.1.1",
