@@ -1,4 +1,4 @@
-name: CI
+name: CI & Deploy
 
 on:
   push:
@@ -19,3 +19,33 @@ jobs:
 
       - name: Run tests in Docker
         run: docker run -e CI=true crisroller/react-dev npm run test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Zip build folder
+        run: zip -r build.zip build
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-west-2
+          application_name: react-app
+          environment_name: ReactApp-env
+          bucket_name: elasticbeanstalk-us-west-2-123456789012
+          version_label: ${{ github.sha }}
+          deployment_package: build.zip

@@ -6,3 +6,15 @@ before_install:
 
 script:
   - docker run -e CI=true crisroller/react-dev npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-west-2"
+  app: "react-app"
+  env: "ReactApp-env"
+  bucket_name: "elasticbeanstalk-us-west-2-123456789012"
+  bucket_path: "react-app"
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+  on:
+    branch: master
